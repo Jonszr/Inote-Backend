@@ -99,7 +99,7 @@ exports.updateUser = (req, res, next) => {
                 user.photo.contentType = files.photo.mimetype;
                 console.log(files.photo.originalFilename)
                 const filename = files.photo.originalFilename;
-                user.photo.photoURL = `${protocol}://${host}:${process.env.PORT}/blog/user/photo/${user._id}/${filename}`
+                user.photo.photoURL = `${process.env.SERVER_DOMAIN}/blog/user/photo/${user._id}/${filename}`
                 console.log(`${protocol}://${host}:${process.env.PORT}/blog/user/photo/${user._id}/${filename}`);
             }
 
