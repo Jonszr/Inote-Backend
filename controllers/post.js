@@ -215,3 +215,77 @@ exports.isPoster = (req, res, next) => {
     }
     next();
 }
+
+exports.comment = (req, res) => {
+    comment = req.body.comment;
+    comment.postedBy = req.body.userId;
+  
+    Post.findByIdAndUpdate(
+      req.body.postId,
+      { $push: { comments: comment } },
+      { new: true }
+    )
+      .populate("comments.postedBy", "_id name")
+      .populate("postedBy", "_id name")
+      .exec((err, result) => {
+        if (err) {
+          return res.status(400).json({
+            error: err,
+          });
+        } else {
+          res.json(result);
+        }
+      });
+  };
+
+exports.uncomment = (req, res) => {
+    let comment = req.body.comment;
+  
+    Post.findByIdAndUpdate(
+      req.body.postId,
+      { $pull: { comments: { _id: comment._id } } },
+      { new: true }
+    )
+      .populate("comments.postedBy", "_id name")
+      .populate("postedBy", "_id name")
+      .exec((err, result) => {
+        if (err) {
+          return res.status(400).json({
+            error: err,
+          });
+        } else {
+          res.json(result);
+        }
+      });
+  };
+
+  exports.updateComment = (req, res) => {
+    let comment = req.body.comment;
+
+    Post.findByIdAndUpdate(req.body.postId, {
+      $pull: { comments: { _id: comment._id } },
+    }).exec((err, result) => {
+      if (err) {
+        return res.status(400).json({
+          error: err,
+        });
+      } else {
+        Post.findByIdAndUpdate(
+          req.body.postId,
+          { $push: { comments: comment, updated: new Date() } },
+          { new: true }
+        )
+          .populate("comments.postedBy", "_id name")
+          .populate("postedBy", "_id name")
+          .exec((err, result) => {
+            if (err) {
+              return res.status(400).json({
+                error: err,
+              });
+            } else {
+              res.json(result);
+            }
+          });
+      }
+    });
+  };

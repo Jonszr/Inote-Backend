@@ -35,6 +35,7 @@ const postSchema = new mongoose.Schema({
         {
             text: String,
             created: { type: Date, default: Date.now },
+            updated:{type:Date},
             postedBy: { type: ObjectId, ref: 'User' }
         }
     ]
